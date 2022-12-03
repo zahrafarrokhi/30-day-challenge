@@ -107,7 +107,8 @@ const Modal = (props) => {
 };
 
 export default function Home() {
-
+  // error
+  const [error,setError] =useState(false)
   //modal
   const [modal, setModal] = useState(false);
   const openModal = () => {
@@ -119,6 +120,23 @@ export default function Home() {
   // create
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [textError, setTextError] = useState("");
+
+  const updateTitle = (newTitle) => {
+    setTitle(newTitle);
+    if (newTitle.length < 5) {
+      setTitleError("Title must be at least 5 characters")
+    } else setTitleError("")
+  }
+
+  const updateText = (newText) => {
+    setText(newText);
+    if (newText.length < 5) {
+      setTextError("Description must be at least 5 characters")
+    } else setTextError("")
+  }
+
   const create = async () => {
     try {
 
@@ -194,19 +212,21 @@ const del =  async(id)=>{
           </div>
           <input
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => updateTitle(e.target.value)}
             type="text"
             className="border-0 border-b border-solid border-gray-400 focus:border-green-400 bg-transparent focus-visible:outline-0 text-white"
             placeholder="Title"
           />
+          {titleError && <h6 className="text-rose-600">* {titleError}</h6>}
           <textarea
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => updateText(e.target.value)}
             type="text"
             className="active:border-0 focus:border-0 p-2 bg-transparent placeholder:text focus-visible:outline-0 text-white"
             rows={6}
             placeholder="My note..."
           />
+          {textError && <h6 className="text-rose-600">* {textError}</h6>}
 
           <div className="flex flex-row justify-end gap-2">
             <button
