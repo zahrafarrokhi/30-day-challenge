@@ -42,6 +42,7 @@ export const deleteTasks = createAsyncThunk(
       const response = await axios.delete(`/task/tasks/${id}`);
 
       console.log(response, response.data);
+      // Because response has no data when action is delete in django
 //  return => id
       return { id };
     } catch (error) {
@@ -58,7 +59,9 @@ export const update = createAsyncThunk(
       const response = await axios.patch(`/task/tasks/${id}/`,{...data});
 
       console.log(response, response.data);
-      return { data: response.data };
+      return { data: response.data }; // => action.payload = { data: response.data } => action.payload.data.id
+      // return response.data // => action.payload = response.data => action.payload.id
+      // return response // => action.payload = response => action.payload.data.id
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue({ error: error.response.data });

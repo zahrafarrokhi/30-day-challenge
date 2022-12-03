@@ -93,7 +93,7 @@ const updateCheck =  async(id, checked)=>{
   
 }
 // filters
-const [filter,setFilter] = useState()
+const [statusFilter,setStatusFilter] = useState()
 
   return (
     <div className={styles.container}>
@@ -125,13 +125,13 @@ const [filter,setFilter] = useState()
         <div className="flex flex-col justify-center items-between gap-3">
           <div className='text-lg font-bold self-center'>Todo List</div>
           <div className="flex justify-around">
-            <button className="bg-blue-400 active:bg-blue-600 text-white text-lg rounded-lg p-2 w-[200px] " onClick={()=>setFilter("")}>
+            <button className="bg-blue-400 active:bg-blue-600 text-white text-lg rounded-lg p-2 w-[200px] " onClick={()=>setStatusFilter("")}>
               All
             </button>
-            <button className="bg-blue-400 active:bg-blue-600 text-white text-lg rounded-lg p-2 w-[200px]" onClick={()=>setFilter("done")}>
+            <button className="bg-blue-400 active:bg-blue-600 text-white text-lg rounded-lg p-2 w-[200px]" onClick={()=>setStatusFilter("done")}>
               Done
             </button>
-            <button className="bg-blue-400 active:bg-blue-600 text-white text-lg rounded-lg p-2 w-[200px]" onClick={()=>setFilter("incomplete")}>
+            <button className="bg-blue-400 active:bg-blue-600 text-white text-lg rounded-lg p-2 w-[200px]" onClick={()=>setStatusFilter("incomplete")}>
              Incomplete
             </button>
           </div>
@@ -139,8 +139,9 @@ const [filter,setFilter] = useState()
 
 
         <div className='flex flex-col gap-4 '>
-          
-        {tasks.filter(item=>filter?item.status == filter:true).map((t)=> <Todo updateCheck={updateCheck} del={del} t={t} key={t.id}/> )}
+          {/* If statusFilter is null => show all items */}
+          {/* else only show items whose status is equal to statusFilter */}
+        {tasks.filter(item=> statusFilter ? item.status == statusFilter : true).map((t)=> <Todo updateCheck={updateCheck} del={del} t={t} key={t.id}/> )}
 
         </div>
         

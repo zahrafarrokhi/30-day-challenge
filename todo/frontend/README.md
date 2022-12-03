@@ -167,3 +167,32 @@ CORS_ALLOW_CREDENTIALS = True # Allow-Credentials...
 }
 // admin django
 ```
+
+```jsx
+const [title,setTitle]= useState("")
+...
+await dispatch(create( { title:title } )).unwrap()
+...
+
+// data = { title: '...' }
+// data => object
+// data.title => string
+// ...data => expand data
+export const create = createAsyncThunk(
+  'task/create',
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.post(`/task/tasks/`,{ ...data });
+      // const response = await axios.post(`/task/tasks/`,{ ...data, status: 'incomplete' });
+      // const response = await axios.post(`/task/tasks/`, data);
+
+      console.log(response, response.data);
+
+      return { data: response.data };
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({ error: error.response.data });
+    }
+  },
+);
+```
