@@ -109,6 +109,8 @@ const Modal = (props) => {
 export default function Home() {
   // error
   const [error,setError] =useState(false)
+  // search
+  const [search,setSearch] =useState("")
   //modal
   const [modal, setModal] = useState(false);
   const openModal = () => {
@@ -151,13 +153,15 @@ export default function Home() {
   const notes = useSelector((state) => state.noteReducer?.notes);
   const list = async () => {
     try {
-      await dispatch(listNotes()).unwrap();
+      await dispatch(listNotes({
+        search
+       })).unwrap();
     } catch (error) {}
   };
   // loading  page => load previous Tasks
   useEffect(() => {
     list();
-  }, []);
+  }, [search]);
  
 // delete
 const del =  async(id)=>{
@@ -178,13 +182,22 @@ const del =  async(id)=>{
 
       <header className="border-0 border-b border-solid border-gray-400 flex flex-row justify-between p-4 ">
         <h1>Note</h1>
-        <div>
-          <BsSearch></BsSearch>
+        <div className="flex flex-row items-center gap-2 p-2 border rounded-lg border-solid border-gray-400 focus:border-green-400 bg-transparent focus-visible:outline-0 text-white">
+        <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            className="bg-transparent focus-visible:outline-0"
+            placeholder="Search..."
+          />
+          <BsSearch ></BsSearch>
         </div>
       </header>
 
       <main className=" relative flex flex-col gap-4 p-4 flex-grow">
         <div className="flex flex-row flex-wrap gap-4">
+        {/* {notes.filter(item=>item.title.toLowerCase().includes(search.toLowerCase())||item.description.toLowerCase().includes(search.toLowerCase())).map((note) => ( */}
+        {/* {notes.filter(item=>`${item.title} ${item.description}`.toLowerCase().includes(search.toLowerCase())).map((note) => ( */}
         {notes.map((note) => (
           <Card note={note} key={note.id} del={del}></Card>
          
@@ -229,9 +242,10 @@ const del =  async(id)=>{
           {textError && <h6 className="text-rose-600">* {textError}</h6>}
 
           <div className="flex flex-row justify-end gap-2">
-            <button
+           <button
               onClick={create}
-              className="flex items-center justify-center text-sm rounded-lg py-2 px-4 shadow-2xl shadow-black bg-teal-400 p-4 active:bg-teal-300 shadow-sm"
+              className="flex items-center justify-center text-sm rounded-lg py-2 px-4 shadow-2xl shadow-black bg-teal-400 p-4 active:bg-teal-300 shadow-sm disabled:active:bg-teal-400 disabled:bg-opacity-30 disabled:active:bg-opacity-30 "
+              disabled={!title || !text}
             >
               Add
             </button>

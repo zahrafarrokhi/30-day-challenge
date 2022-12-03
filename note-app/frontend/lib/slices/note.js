@@ -23,7 +23,7 @@ export const listNotes = createAsyncThunk(
   'note/list',
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(`/note/notes/`);
+      const response = await axios.get(`/note/notes/`, { params: _ });
 
       console.log(response, response.data);
 
