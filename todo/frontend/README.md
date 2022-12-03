@@ -196,3 +196,30 @@ export const create = createAsyncThunk(
   },
 );
 ```
+
+## How does useEffect load a section of the page? 
+```jsx
+const tasks = useSelector(state=>state.taskReducer?.tasks)
+
+{tasks.map(...)} // -> react virtual dom => Update this section whenever tasks update
+// lib...
+const internalInitialState = {
+  tasks :[], // tasks list
+  ...
+};
+
+
+builder.addCase(listTasks .fulfilled, (state, action) => { // whenever listTasks is fullfilled(called)
+  state.loading = false; 
+  state.tasks = action.payload.data // update tasks list
+  
+  return state;
+});
+
+// loading  page => load previous Tasks
+useEffect(()=>{
+  list()
+},[])
+
+
+```
