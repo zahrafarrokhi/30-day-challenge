@@ -141,7 +141,9 @@ const [statusFilter,setStatusFilter] = useState()
         <div className='flex flex-col gap-4 '>
           {/* If statusFilter is null => show all items */}
           {/* else only show items whose status is equal to statusFilter */}
-        {tasks.filter(item=> statusFilter ? item.status == statusFilter : true).map((t)=> <Todo updateCheck={updateCheck} del={del} t={t} key={t.id}/> )}
+          {(statusFilter ? tasks.filter(item=> item.status == statusFilter) : tasks).map((t)=> <Todo updateCheck={updateCheck} del={del} t={t} key={t.id}/> )}
+          {/* OR */}
+        {/* {tasks.filter(item=> statusFilter ? item.status == statusFilter : true).map((t)=> <Todo updateCheck={updateCheck} del={del} t={t} key={t.id}/> )} */}
 
         </div>
         
