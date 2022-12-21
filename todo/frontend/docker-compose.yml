@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  nextjs:
+    image: todo-frontend
+    build: .
+
+    ports:
+      - 3000:3000
+
+
+networks:
+  todo-network:
+    external: true
