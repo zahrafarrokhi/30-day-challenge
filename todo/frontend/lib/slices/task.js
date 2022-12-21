@@ -42,6 +42,7 @@ export const deleteTasks = createAsyncThunk(
       const response = await axios.delete(`/task/tasks/${id}`);
 
       console.log(response, response.data);
+      console.log("HELLO")
       // Because response has no data when action is delete in django
 //  return => id
       return { id };

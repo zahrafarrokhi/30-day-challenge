@@ -70,6 +70,8 @@ export default function Home() {
 // loading  page => load previous Tasks
 useEffect(()=>{
   list()
+  console.log("HELLO")
+
 },[])
 
 
