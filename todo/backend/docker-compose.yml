@@ -38,5 +38,6 @@ volumes:
   todo_postgres_data:
 
 networks:
-  todo-network:
+  default:
+    name: todo-network
     external: true

@@ -9,6 +9,8 @@ services:
       - 3000:3000
 
 
+
 networks:
-  todo-network:
+  default:
+    name: todo-network
     external: true
