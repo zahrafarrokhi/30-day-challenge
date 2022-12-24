@@ -2,6 +2,10 @@
 
 ![Containerization](./Containerization.png)
 
+# Writing docker files
+
+![Writing docker files](./Writing-docker-files.png)
+
 # Docker commands
 
 ```bash
