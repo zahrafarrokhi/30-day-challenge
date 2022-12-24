@@ -6,9 +6,11 @@ import format from 'date-fns/format'
 
 const OPACITY = [1, 0.5, 0.25, 0]
 
-export default function MonthPicker() {
+export default function MonthPicker(props) {
+  
 
-  const [month,setMonth]= useState(new Date())
+  // const [month,setMonth]= useState(new Date())
+  const {totalState: month, setTotalState: setMonth} = props;
 
   const updateMonth = (value)=>{
     

@@ -7,9 +7,9 @@ import addYears from 'date-fns/addYears'
 
 
 
-export default function YearPicker() {
-  const [year,setYear]= useState(new Date())
-
+export default function YearPicker(props) {
+  // const [year,setYear]= useState(new Date())
+  const {totalState: year, setTotalState: setYear} = props;
   const calYearPlus = ()=>{
     
     setYear(y => addYears(y, 1))
