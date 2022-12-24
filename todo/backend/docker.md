@@ -1,3 +1,7 @@
+# Containerization
+
+![Containerization](./Containerization.png)
+
 # Docker commands
 
 ```bash
