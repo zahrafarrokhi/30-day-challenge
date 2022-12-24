@@ -20,6 +20,7 @@ const Card = (props)=>{
 
   const cancelEdit = () => {
     setEdit(false)
+    // reset fileds when you cancel btn
     setTitle(note.title)
     setText(note.description)
   }
