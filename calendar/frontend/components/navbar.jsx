@@ -11,8 +11,11 @@ export default function Navbar(props) {
   const {children}= props;
   const router = useRouter()
   return (
-    <div className="flex">
+    <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-300 flex h-full w-full justify-center items-center relative overflow-hidden">
+    <div className="flex h-[90%] w-[90%] bg-slate-100 relative overflow-hidden rounded-lg">
+      <div className="absolute h-[175%] w-[175%] bg-white rounded-full -right-[120%]"></div>
       <Drawer
+      className="bg-slate-700"
         variant="persistent"
         open={true}
         ModalProps={{
@@ -22,36 +25,39 @@ export default function Navbar(props) {
           width: "240px",
           "& .MuiDrawer-paper": { boxSizing: "border-box", width: "240px" },
         }}
+        PaperProps={{
+          className: "bg-slate-200 text-slate-700 flex flex-col justify-center relative"
+        }}
       >
         <List>
-          <ListItem>
+          <ListItem >
             <ListItemButton onClick={()=>router.push('/')}>
-              <ListItemIcon></ListItemIcon>
               <ListItemText primary={"Calender"} />
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
+          <ListItem >
             <ListItemButton>
-              <ListItemIcon></ListItemIcon>
               <ListItemText primary={"Holiday"} />
             </ListItemButton>
           </ListItem>
-          <ListItem>
+          <ListItem >
             <ListItemButton>
-              <ListItemIcon></ListItemIcon>
               <ListItemText primary={"Events"} />
             </ListItemButton>
           </ListItem>
-          <ListItem>
+          <ListItem >
             <ListItemButton>
-              <ListItemIcon></ListItemIcon>
               <ListItemText primary={"Logout"} />
             </ListItemButton>
           </ListItem>
         </List>
       </Drawer>
-      {children}
+      <main className="overflow-auto flex-grow z-10">
+
+        {children}
+      </main >
+    </div>
     </div>
   );
 }

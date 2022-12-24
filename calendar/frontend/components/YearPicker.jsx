@@ -26,9 +26,9 @@ export default function YearPicker(props) {
   // }
   return (
     <div>
-      <Button onClick={calYearNeagative}><ArrowBackIosIcon/></Button>
+      <Button onClick={calYearNeagative}><ArrowBackIosIcon className='text-slate-300 text-sm'/></Button>
       {getYear(year)}
-      <Button onClick={calYearPlus}><ArrowForwardIosIcon/></Button>
+      <Button onClick={calYearPlus}><ArrowForwardIosIcon className='text-slate-300 text-sm'/></Button>
 
       {/* <Button onClick={() => updateYear(-1)}><ArrowBackIosIcon/></Button>
       {year}

@@ -6,19 +6,27 @@ import createEmotionCache from '../lib/createEmotionCache';
 import theme from '../lib/theme';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { PersistGate } from 'redux-persist/integration/react';
+import { useStore } from 'react-redux';
 
 const clientSideEmotionCache = createEmotionCache();
 
 
 function App({ Component, pageProps, emotionCache = clientSideEmotionCache,  }) {
   const getLayout = Component.getLayout || ((component) => component); 
-  return ( <CacheProvider value={emotionCache}>
+  const store = useStore();
+
+  return (
+    <PersistGate persistor={store.__PERSISTOR} loading={null}>
+ 
+  <CacheProvider value={emotionCache}>
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         {getLayout(<Component {...pageProps} />)}
       </LocalizationProvider>
     </ThemeProvider>
-  </CacheProvider>)
+  </CacheProvider>
+  </PersistGate>)
 }
 export default wrapper.withRedux(App)

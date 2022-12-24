@@ -17,8 +17,10 @@ export const signup = createAsyncThunk(
   }
 );
 // login
+// request to back for get accsess &refrsh
 export const login = createAsyncThunk("auth/login", async (data, thunkAPI) => {
   try {
+    // response backend => access & refresh in body
     const response = await axios.post(`/auth/login/`, { ...data });
 
     console.log(response, response.data);
