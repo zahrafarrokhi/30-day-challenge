@@ -3,10 +3,18 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../axios";
 // listTask
 export const listTask = createAsyncThunk(
-  "auth/create",
+  "task/list",
   async (data, thunkAPI) => {
     try {
-      const response = await axios.get(`/task/task/`);
+      const response = await axios.get(`/task/task/`, {
+        params: {
+          // if data = { date }
+          // date__date__exact: data.date
+          // or
+          // if data = { date__date__exact }
+          ...data,
+        },
+      });
 
       console.log(response, response.data);
 
@@ -18,33 +26,66 @@ export const listTask = createAsyncThunk(
   }
 );
 
+// createTask
+export const createTask = createAsyncThunk(
+  "task/create",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.post(`/task/task/`, { ...data });
 
-// // refresh
-// export const refresh = createAsyncThunk(
-//   "auth/login",
-//   async (data, thunkAPI) => {
-//     try {
-//       const response = await axios.post(`/auth/refresh/`, { ...data });
+      console.log(response, response.data);
 
-//       console.log(response, response.data);
+      return { data: response.data }; // action.paylod.data =>  data: response.data
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({ error: error.response.data });
+    }
+  }
+);
+// updateTask
+export const updateTask = createAsyncThunk(
+  "task/update",
+  async ({ id, ...data }, thunkAPI) => {
+    try {
+      const response = await axios.patch(`/task/task/${id}/`, { ...data });
 
-//       return { data: response.data };
-//     } catch (error) {
-//       console.log(error);
-//       return thunkAPI.rejectWithValue({ error: error.response.data });
-//     }
-//   }
-// );
+      console.log(response, response.data);
+
+      return { data: response.data };
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({ error: error.response.data });
+    }
+  }
+);
+
+// listDays
+export const listDays = createAsyncThunk(
+  "task/list-days",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.get(`/task/days/`);
+
+      console.log(response, response.data);
+
+      return { data: response.data };
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({ error: error.response.data });
+    }
+  }
+);
 
 const internalInitialState = {
   tasks: [],
+  days: [],
   task: null,
   error: null,
   loading: false, // false ,not busy
 };
 
 export const taskSlice = createSlice({
-  name: "auth",
+  name: "task",
   initialState: internalInitialState,
   reducers: {
     reset: () => internalInitialState,
@@ -66,25 +107,59 @@ export const taskSlice = createSlice({
 
       return state;
     });
+    // createTask
+    builder.addCase(createTask.pending, (state) => ({
+      ...state,
+      loading: true,
+    }));
+    builder.addCase(createTask.rejected, (state, action) => ({
+      ...state,
+      loading: false,
+      error: action.payload.error,
+    }));
+    builder.addCase(createTask.fulfilled, (state, action) => {
+      state.loading = false;
+      state.tasks = [...state.tasks, action.payload.data];
 
-  //   // login
-  //   builder.addCase(login.pending, (state) => ({
-  //     ...state,
-  //     loading: true,
-  //   }));
-  //   builder.addCase(login.rejected, (state, action) => ({
-  //     ...state,
-  //     loading: false,
-  //     error: action.payload.error,
-  //   }));
-  //   builder.addCase(login.fulfilled, (state, action) => {
-  //     state.loading = false;
-  //     state.refresh = action.payload.data.refresh;
-  //     state.access = action.payload.data.access;
-      
-  //     axios.defaults.headers.common.Authorization = `Bearer ${state.access}`
-  //     return state;
-  //   });
+      return state;
+    });
+
+    // updateTask
+    builder.addCase(updateTask.pending, (state) => ({
+      ...state,
+      // loading: true,
+    }));
+    builder.addCase(updateTask.rejected, (state, action) => ({
+      ...state,
+      // loading: false,
+      error: action.payload.error,
+    }));
+    builder.addCase(updateTask.fulfilled, (state, action) => {
+      // state.loading = false;
+      state.tasks = [
+        ...state.tasks.filter((item) => item.id != action.payload.data.id),
+        action.payload.data,
+      ].sort((a, b) => a.id - b.id);
+
+      return state;
+    });
+
+    // listDays
+    builder.addCase(listDays.pending, (state) => ({
+      ...state,
+      loading: true,
+    }));
+    builder.addCase(listDays.rejected, (state, action) => ({
+      ...state,
+      loading: false,
+      error: action.payload.error,
+    }));
+    builder.addCase(listDays.fulfilled, (state, action) => {
+      state.loading = false;
+      state.days = action.payload.data;
+
+      return state;
+    });
   },
 });
 

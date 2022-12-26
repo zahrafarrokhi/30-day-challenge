@@ -424,3 +424,348 @@ export const setupInterceptors = (store) => {
   });
 };
 ```
+
+## tasks
+show tasks on specific day
+
+
+### backend
+```python
+pip install django-filter
+
+from django_filters.rest_framework import DjangoFilterBackend
+
+class TaskView(mixins.CreateModelMixin,mixins.ListModelMixin,viewsets.GenericViewSet):
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = {
+        'date': ['date',],
+    }
+
+
+```
+
+### frontend
+
+```jsx
+
+// listTask
+export const listTask = createAsyncThunk(
+  "task/list",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.get(`/task/task/`,{params:{ 
+        // if data = { date }
+        // date__date__exact: data.date
+        // or
+        // if data = { date__date__exact }
+        ...data
+      }});
+
+      console.log(response, response.data);
+
+      return { data: response.data };
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({ error: error.response.data });
+    }
+  }
+);
+// components/calender
+ <CalendarPicker
+//  state => [day ,selectedDays]
+        renderDay={(day, selectedDays, pickersProps) => {
+          return (
+            <CustomDay
+           ....
+            />
+          );
+        }}
+       
+      />
+// 
+const CustomDay = (props) => {
+....
+  const tasks = useSelector((state) => state.taskReducer?.tasks);
+  const loading = useSelector((state) => state.taskReducer?.loading);
+  const List = async () => {
+    try {
+      await dispatch(
+        listTask({
+          date__date: format(day, "yyyy-MM-dd"),
+        })
+      ).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return (
+    <>
+      <PickersDay
+        day={day}
+        selectedDays={selectedDays}
+        {...pickersProps}
+        onClick={(e) => {
+          setOpen(true);
+          // setAnchorEl(e.target);
+          List();
+        }}
+      />
+      {open && (
+        <Menu open={open} onClose={() => setOpen(false)} anchorEl={ref.current}>
+          {loading == false &&
+            tasks?.map((t) => (
+              <ListItem>
+                <ListItemText primary={t.name} />
+              </ListItem>
+            ))}
+
+          {loading && (
+            <div className="p-3 flex-col flex gap-2">
+              <Skeleton variant="rounded" width={100} height={16} />
+              <Skeleton variant="rounded" width={100} height={16} />
+            </div>
+          )}
+        </Menu>
+      )}
+    </>
+  );
+};
+```
+
+## create redux
+```jsx
+// createTask
+export const createTask = createAsyncThunk(
+  "task/create",
+  async (data, thunkAPI) => {
+    try {
+    ...
+
+      return { data: response.data }; // action.paylod.data =>  data: response.data
+    } catch (error) {
+     ...
+    }
+  }
+);
+// => return above func => action.paylod
+
+builder.addCase(createTask.fulfilled, (state, action) => {
+      state.loading = false;
+      state.tasks =[...state.tasks, action.payload.data]; 
+
+
+      return state;
+    });
+
+
+```
+
+action.payload.data is object
+![Action Payload](./screenshots/create-action-payload.png)
+
+add object to end of list
+```jsx
+  state.tasks =[...state.tasks, action.payload.data]; 
+```
+
+## Complete Tasks
+### backend
+```python
+class TaskView(mixins.UpdateModelMixin, ...,viewsets.GenericViewSet):
+  ...
+
+```
+
+### frontend
+
+```jsx
+// lib/slices/task.js
+
+// updateTask
+export const updateTask = createAsyncThunk(
+  "task/update",
+  async ({ id, ...data }, thunkAPI) => {
+    try {
+      const response = await axios.patch(`/task/task/${id}/`, { ...data });
+
+      console.log(response, response.data);
+
+      return { data: response.data };
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({ error: error.response.data });
+    }
+  }
+);
+
+builder.addCase(updateTask.fulfilled, (state, action) => {
+  // state.loading = false;
+  state.tasks = [
+    ...state.tasks.filter((item) => item.id != action.payload.data.id),
+    action.payload.data,
+  ].sort((a, b) => a.id - b.id); // to fix ordering after update(page glitch)
+
+  return state;
+});
+
+// components/Calendar.jsx
+const Togglecheck = async (z) => {
+  try {
+    await dispatch(
+      updateTask({
+        // ...z,
+        id: z.id,
+        task_complete: z.task_complete ? false : true,
+      })
+    ).unwrap();
+    setOpenDialog(false);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+{loading == false &&
+  tasks &&
+  tasks?.map((t) => (
+    <ListItem key={t.id}>
+      <ListItemIcon className="justify-center">
+        <Checkbox
+          checked={t.task_complete} // Load state
+          onChange={() => Togglecheck(t)} // Update state
+        />
+      </ListItemIcon>
+      <ListItemText primary={t.name} secondary={t.description} />
+    </ListItem>
+  ))}
+
+
+```
+
+## Show badge on days with task
+
+```
+Data:
+[
+  { date: '2022-12-1' },
+  { date: '2022-12-6' },
+  { date: '2022-11-19' },
+]
+```
+
+### backend
+
+```python
+# views.py
+class CalendarView(mixins.ListModelMixin,viewsets.GenericViewSet):
+    serializer_class = CalenderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = (Task.objects
+                      .filter(user=user) # filter for user
+                      .values('date__date') # create a new column, date => 2022-12-19
+                      .annotate(count=Count('date__date')) # Group by date__date, count each day
+                ) # 2020/5/14
+        print(queryset)
+        return queryset
+
+# serializers.py
+
+class CalenderSerializer(serializers.Serializer):
+    date = serializers.DateField(source='date__date')
+
+##########
+### OR ###
+##########
+# views.py
+
+class CalendarView(mixins.ListModelMixin,viewsets.GenericViewSet):
+    serializer_class = CalenderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Task.objects.filter(user=user) \
+          .annotate(day=F("date__date")) \
+            .values('day') \
+              .annotate(count=Count('day'))
+        print(queryset)
+        return queryset
+
+
+# serializers.py
+class CalenderSerializer(serializers.Serializer):
+    day = serializers.DateField()
+
+```
+
+### frontend
+
+```jsx
+// lib/slices/task.js
+// listDays
+export const listDays = createAsyncThunk(
+  "task/list-days",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.get(`/task/days/`);
+
+      console.log(response, response.data);
+
+      return { data: response.data };
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({ error: error.response.data });
+    }
+  }
+);
+builder.addCase(listDays.fulfilled, (state, action) => {
+  state.loading = false;
+  state.days = action.payload.data;
+
+  return state;
+});
+
+// components/Calendar.jsx
+
+const CustomDay = (props) => {
+  const days = useSelector((state) => state.taskReducer?.days);
+  // console.log(days, days?.map(item=>item.date == format(day, "yyyy-MM-dd")), format(day, "yyyy-MM-dd"))
+  const hasTasks =
+    days?.findIndex((item) => item.date == format(day, "yyyy-MM-dd")) > -1;
+
+  <Badge color="secondary" variant="dot" invisible={!hasTasks}>
+    <PickersDay
+      day={day}
+      selectedDays={selectedDays}
+      {...pickersProps}
+      ref={ref}
+      onClick={(e) => {
+        setOpen(true);
+        // setAnchorEl(e.target);
+        List();
+      }}
+    />
+  </Badge>
+}
+
+export default function Calendar(props) {
+  const dispatch = useDispatch();
+
+  const getDays = async () => {
+    try {
+      await dispatch(listDays()).unwrap();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getDays();
+  }, []);
+  ...
+}
+```

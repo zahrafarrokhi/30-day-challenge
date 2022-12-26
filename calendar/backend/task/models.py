@@ -12,6 +12,6 @@ class Task(models.Model):
     date = models.DateTimeField()
     created_at= models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    task_complete = models.BooleanField(default=False)
     def __str__(self):
         return f'{self.date.strftime("%Y-%m-%d %H:%M:%S")} - {self.name}'
