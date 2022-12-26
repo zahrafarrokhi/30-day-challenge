@@ -8,6 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { PersistGate } from 'redux-persist/integration/react';
 import { useStore } from 'react-redux';
+import { setupInterceptors } from '../lib/axios';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -15,6 +16,8 @@ const clientSideEmotionCache = createEmotionCache();
 function App({ Component, pageProps, emotionCache = clientSideEmotionCache,  }) {
   const getLayout = Component.getLayout || ((component) => component); 
   const store = useStore();
+
+  setupInterceptors(store)
 
   return (
     <PersistGate persistor={store.__PERSISTOR} loading={null}>

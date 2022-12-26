@@ -339,3 +339,36 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache,  }) 
 
 
 ```
+
+### refresh token 
+`Error: Authentication credentials were not provided.`
+```jsx
+npm i axios-auth-refresh
+// axios.js
+export const setupInterceptors = (store) => {
+ 
+
+  createAuthRefreshInterceptor(axiosInstance, async (failedRequest) => {
+    const resp = await axiosInstance.post("/auth/refresh/", {
+      refresh: store.getState().authReducer?.refresh,
+    });
+    const { access: accessToken } = resp.data;
+    const bearer = `${process.env.JWT_AUTH_HEADER ?? "Bearer"} ${accessToken}`;
+    console.log(accessToken);
+    axiosInstance.defaults.headers.common.Authorization = bearer;
+
+    failedRequest.response.config.headers.Authorization = bearer;
+    return Promise.resolve();
+  });
+};
+
+export default axiosInstance;
+// _app.js
+import { setupInterceptors } from '../lib/axios';
+function App({ Component, pageProps, emotionCache = clientSideEmotionCache,  }) {
+  
+  const store = useStore();
+
+  setupInterceptors(store)
+
+```
