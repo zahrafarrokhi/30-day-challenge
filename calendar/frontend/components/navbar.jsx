@@ -40,8 +40,10 @@ export default function Navbar(props) {
           </ListItem>
 
           <ListItem >
-            <ListItemButton>
-              <ListItemText primary={"Holiday"} />
+            <ListItemButton onClick={() => {
+              router.push('/tasks')
+            }}>
+              <ListItemText primary={"tasks"} />
             </ListItemButton>
           </ListItem>
           <ListItem >

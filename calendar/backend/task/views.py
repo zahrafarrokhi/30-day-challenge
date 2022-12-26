@@ -8,7 +8,7 @@ from task.serializers import TaskSerializer, CalenderSerializer
 
 
 # Create your views here.
-class TaskView(mixins.CreateModelMixin,mixins.ListModelMixin,mixins.UpdateModelMixin,viewsets.GenericViewSet):
+class TaskView(mixins.CreateModelMixin,mixins.ListModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,viewsets.GenericViewSet):
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, ]

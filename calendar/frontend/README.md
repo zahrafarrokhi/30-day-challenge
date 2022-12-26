@@ -769,3 +769,105 @@ export default function Calendar(props) {
   ...
 }
 ```
+
+### edit
+
+## backend
+
+```python
+class TaskView(UpdateModelMixin,viewsets.GenericViewSet):
+  pass
+
+```
+
+## frontend
+```jsx
+//redux
+// updateTask
+export const updateTask = createAsyncThunk(
+  "task/update",
+  async ({ id, ...data }, thunkAPI) => {
+    try {
+      const response = await axios.patch(`/task/task/${id}/`, { ...data });
+
+      console.log(response, response.data);
+
+      return { data: response.data };
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({ error: error.response.data });
+    }
+  }
+);
+//
+  builder.addCase(updateTask.fulfilled, (state, action) => {
+      // state.loading = false;
+      state.tasks = [
+        ...state.tasks.filter((item) => item.id != action.payload.data.id),
+        action.payload.data,
+      ].sort((a, b) => a.id - b.id);
+
+      return state;
+    });
+
+// create component pencil for having seprate state
+//  which fields update => name,des,checkbox
+update => name.des , setEdit(false) // remove textfield
+Togglecheck => checkbox //  <Checkbox checked={row.task_complete} onChange={(e)=>Togglecheck(e.target.checked)}/>
+
+// with enter change data
+ <form onSubmit={(e)=>update(e)}>
+        ...
+          </form>
+//
+const update = async (e) => {
+    e.preventDefault()
+    try {
+      await dispatch(
+        updateTask({
+          ...total, // => use all the fields in the state
+          id: row.id,
+         
+        })
+
+      ).unwrap();
+     
+  };
+```
+
+## Get date from url
+
+```jsx
+  const {date} = router.query
+
+  const totalState = useMemo(() => {
+    if (date) {
+      const day = new Date(date)
+      return day
+    } else return new Date()
+  }, [date])
+
+  useEffect(() => {
+    List()
+  }, [])
+
+  const calYearPlus = () => {
+    const newDay = addDays(totalState, 1);
+    // setTotalState(newDay);
+    List(newDay);
+    router.push({
+      pathname: '/tasks',
+      query: { date:format(newDay, "yyyy-MM-dd")  },
+    })
+  };
+
+  const calYearNeagative = () => {
+    const newDay = addDays(totalState, -1);
+    // setTotalState(newDay);
+    List(newDay);
+    router.push({
+      pathname: '/tasks',
+      query: { date:format(newDay, "yyyy-MM-dd")  },
+    })
+  };
+```

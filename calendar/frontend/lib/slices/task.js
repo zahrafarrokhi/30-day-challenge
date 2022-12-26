@@ -76,6 +76,24 @@ export const listDays = createAsyncThunk(
   }
 );
 
+// deleteTask
+export const deleteTask = createAsyncThunk(
+  "task/delete",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.delete(`/task/task/${id}/`);
+
+      console.log(response, response.data);
+
+      return id;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({ error: error.response.data });
+    }
+  }
+);
+
+
 const internalInitialState = {
   tasks: [],
   days: [],
@@ -157,6 +175,23 @@ export const taskSlice = createSlice({
     builder.addCase(listDays.fulfilled, (state, action) => {
       state.loading = false;
       state.days = action.payload.data;
+
+      return state;
+    });
+
+    // deleteTask
+    builder.addCase(deleteTask.pending, (state) => ({
+      ...state,
+      loading: true,
+    }));
+    builder.addCase(deleteTask.rejected, (state, action) => ({
+      ...state,
+      loading: false,
+      error: action.payload.error,
+    }));
+    builder.addCase(deleteTask.fulfilled, (state, action) => {
+      state.loading = false;
+      state.tasks = state.tasks.filter((item) => item.id != action.payload)
 
       return state;
     });

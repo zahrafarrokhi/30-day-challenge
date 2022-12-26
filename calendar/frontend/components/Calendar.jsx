@@ -1,4 +1,11 @@
-import { Add, PlusOneRounded } from "@mui/icons-material";
+import { useTheme } from "@emotion/react";
+import {
+  Add,
+  CalendarMonth,
+  PlusOneRounded,
+  Router,
+  Task,
+} from "@mui/icons-material";
 import {
   Badge,
   Button,
@@ -14,12 +21,15 @@ import {
   Skeleton,
   TextField,
 } from "@mui/material";
+import { Box, styled } from "@mui/system";
 import { CalendarPicker, PickersDay } from "@mui/x-date-pickers";
 import { format } from "date-fns";
+import { useRouter } from "next/router";
 import { list } from "postcss";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createTask, listDays, listTask, updateTask } from "../lib/slices/task";
+
 
 const CustomDay = (props) => {
   const { day, selectedDays, pickersProps } = props;
@@ -36,6 +46,10 @@ const CustomDay = (props) => {
   const [des, setDes] = useState("");
   // checkbox
   const [check, setCheck] = useState(false);
+
+  const theme = useTheme();
+  const router = useRouter();
+
   const List = async () => {
     try {
       await dispatch(
@@ -85,13 +99,27 @@ const CustomDay = (props) => {
 
   return (
     <>
-      <Badge color="secondary" variant="dot" invisible={!hasTasks} sx={{
-        '& .MuiBadge-badge': {
-          top: '0.5em',
-          right: '0.5em',
-        }
-      }}>
+      <Badge
+        color="secondary"
+        variant="dot"
+        invisible={!hasTasks}
+        sx={{
+          "& .MuiBadge-badge": {
+            top: "0.5em",
+            right: "0.5em",
+          },
+        }}
+      >
         <PickersDay
+        sx={{
+          'flexGrow': 1,
+          height: '60px',
+          width: '60px',
+          [theme.breakpoints.down('md')]: {
+            height: '36px',
+            width: '36px',
+          },
+        }}
           day={day}
           selectedDays={selectedDays}
           {...pickersProps}
@@ -104,21 +132,49 @@ const CustomDay = (props) => {
         />
       </Badge>
       {open && (
-        <Menu open={open} onClose={() => setOpen(false)} anchorEl={ref.current}>
+        <Menu
+          open={open}
+          onClose={() => setOpen(false)}
+          anchorEl={ref.current}
+          MenuListProps={{ 
+            className: "[&>li]:py-0", 
+            sx: {
+              '& .MuiTypography-root': {
+                fontSize: '0.9em'
+              },
+              '& .MuiListItemIcon-root': {
+                color: 'secondary.main'
+              }
+            } 
+          }}
+          PaperProps={{ sx: { borderRadius: "1.5em" } }}
+        >
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon className="justify-center">
+                <Task />
+              </ListItemIcon>
+              <ListItemText primary={"Recent Tasks"} />
+            </ListItemButton>
+          </ListItem>
+
           {loading == false &&
             tasks &&
-            tasks?.map((t) => (
-              <ListItem key={t.id}>
-                <ListItemIcon className="justify-center">
-                  {/* <Checkbox checked={check} onChange={(e)=>setCheck(e.target.checked)}/> */}
-                  <Checkbox
-                    checked={t.task_complete}
-                    onChange={() => Togglecheck(t)}
-                  />
-                </ListItemIcon>
-                <ListItemText primary={t.name} secondary={t.description} />
-              </ListItem>
-            ))}
+            // recent tasks
+            tasks
+              ?.filter((item, index, array) => index >= array.length - 3)
+              ?.map((t) => (
+                <ListItem key={t.id}>
+                  <ListItemIcon className="justify-center">
+                    {/* <Checkbox checked={check} onChange={(e)=>setCheck(e.target.checked)}/> */}
+                    <Checkbox
+                      checked={t.task_complete}
+                      onChange={() => Togglecheck(t)}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary={t.name} secondary={t.description} />
+                </ListItem>
+              ))}
 
           {loading && (
             <div className="p-3 flex-col flex gap-2">
@@ -126,6 +182,23 @@ const CustomDay = (props) => {
               <Skeleton variant="rounded" width={100} height={16} />
             </div>
           )}
+
+          <ListItem disablePadding>
+            <ListItemButton
+              onClick={() =>
+                router.push({
+                  pathname: "/tasks",
+                  query: { date: format(day, "yyyy-MM-dd") },
+                })
+              }
+            >
+              <ListItemIcon className="justify-center">
+                <CalendarMonth />
+              </ListItemIcon>
+              <ListItemText primary={"View Tasks"} />
+            </ListItemButton>
+          </ListItem>
+
           <ListItem disablePadding>
             <ListItemButton onClick={() => setOpenDialog(true)}>
               <ListItemIcon className="justify-center">
@@ -163,6 +236,7 @@ const CustomDay = (props) => {
 };
 
 export default function Calendar(props) {
+  const theme = useTheme();
   // const [date,setDate]=useState(new Date())
   const { totalState: date, setTotalState: setDate } = props;
   const dispatch = useDispatch();
@@ -179,8 +253,35 @@ export default function Calendar(props) {
     getDays();
   }, []);
   return (
-    <div>
+    <Box sx={{
+      // width: '100%',
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      '& .MuiCalendarPicker-root': {
+        maxHeight: 'unset',
+        width: 'unset',
+      },
+      '& .MuiDayPicker-weekDayLabel': {
+        [theme.breakpoints.down('md')]: {
+          height: '36px',
+          width: '36px',
+        },
+        height: '60px',
+        width: '60px',
+      },
+      '& .MuiPickersDay-hiddenDaySpacingFiller': {
+        [theme.breakpoints.down('md')]: {
+          height: '36px',
+          width: '36px',
+        },
+        height: '60px',
+        width: '60px',
+      }
+    }}>
       <CalendarPicker
+        views={['day']}
         renderDay={(day, selectedDays, pickersProps) => {
           return (
             <CustomDay
@@ -193,6 +294,6 @@ export default function Calendar(props) {
         date={date}
         onChange={(newDate) => setDate(newDate)}
       />
-    </div>
+      </Box>
   );
 }
