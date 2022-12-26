@@ -5,6 +5,6 @@ from authentication.serializers import UserSerializer
 
 
 # Create your views here.
-class Signup(mixins.CreateModelMixin,viewsets.GenericViewSet):
+class Signup(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = UserSerializer
     permission_classes = []

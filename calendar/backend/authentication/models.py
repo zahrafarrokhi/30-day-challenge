@@ -41,7 +41,6 @@ class User(AbstractUser):
     username = None
     phone_number = models.CharField(max_length=16,
                                     unique=True, null=True, default=None)
-    phone_number_verified = models.BooleanField(default=False)
 
 
     USERNAME_FIELD = 'phone_number'
