@@ -43,14 +43,14 @@ export default function Navbar(props) {
             <ListItemButton onClick={() => {
               router.push('/tasks')
             }}>
-              <ListItemText primary={"tasks"} />
+              <ListItemText primary={"Tasks"} />
             </ListItemButton>
           </ListItem>
-          <ListItem >
+          {/* <ListItem >
             <ListItemButton>
               <ListItemText primary={"Events"} />
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
           <ListItem >
             <ListItemButton onClick={() => {
               logout(dispatch)

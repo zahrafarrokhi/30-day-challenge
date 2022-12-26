@@ -1,3 +1,11 @@
+# Calendar app (React/Django)
+
+![Calendar](./screenshots/final-calendar.png)
+## ADD New task
+![New task](./screenshots/final-new.png)
+## Tasks
+![Tasks](./screenshots/final-tasks.png)
+
 ## install
 ```bash
 npx create-next-app frontend
@@ -871,3 +879,57 @@ const update = async (e) => {
     })
   };
 ```
+## weekends
+### frontend
+```jsx
+// components/calender
+import isWeekend from "date-fns/isWeekend";
+const StyledPickersDay = styled(PickersDay)(({ theme, selected, weekend, holiday }) => ({
+
+
+  ...(weekend && {
+    color: theme.palette.warning.main,
+  }),
+  ...(weekend && selected && {
+    color: 'white',
+    // backgroundColor: `${theme.palette.warning.light} !important`,
+  }),
+  
+}))
+
+  <StyledPickersDay
+  
+    
+    weekend={isWeekend(day)}
+    ...
+  />
+```
+## holidays
+```bash
+npm i date-holidays
+
+```
+### frontend
+```jsx
+import Holidays from 'date-holidays'
+// components/calender
+const StyledPickersDay = styled(PickersDay)(({ theme, selected, weekend, holiday }) => ({
+ 
+
+  ...(holiday && {
+    color: 'white',
+    '&.MuiPickersDay-root': {
+      backgroundColor: `${theme.palette.warning.light}`,
+    },
+  }),
+}))
+
+const holidays = new Holidays('US', 'la', 'no')
+  <StyledPickersDay
+  ...
+    
+    holiday={holidays.isHoliday(day)}
+
+  />
+```
+

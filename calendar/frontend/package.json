@@ -21,6 +21,7 @@
     "axios": "^1.2.1",
     "axios-auth-refresh": "^3.3.4",
     "date-fns": "^2.29.3",
+    "date-holidays": "^3.16.13",
     "eslint": "8.30.0",
     "eslint-config-next": "13.1.1",
     "next": "13.1.1",

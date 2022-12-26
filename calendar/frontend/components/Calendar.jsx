@@ -21,17 +21,37 @@ import {
   Skeleton,
   TextField,
 } from "@mui/material";
-import { Box, styled } from "@mui/system";
+import { Box, styled } from "@mui/material";
 import { CalendarPicker, PickersDay } from "@mui/x-date-pickers";
 import { format } from "date-fns";
+import isWeekend from "date-fns/isWeekend";
 import { useRouter } from "next/router";
 import { list } from "postcss";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createTask, listDays, listTask, updateTask } from "../lib/slices/task";
+import Holidays from 'date-holidays'
 
+
+const StyledPickersDay = styled(PickersDay)(({ theme, selected, weekend, holiday }) => ({
+ 
+  ...(weekend && {
+    color: theme.palette.warning.main,
+  }),
+  ...(weekend && selected && {
+    color: 'white',
+    // backgroundColor: `${theme.palette.warning.light} !important`,
+  }),
+  ...(holiday && {
+    color: 'white',
+    '&.MuiPickersDay-root': {
+      backgroundColor: `${theme.palette.warning.light}`,
+    },
+  }),
+}))
 
 const CustomDay = (props) => {
+  const holidays = new Holidays('US', 'la', 'no')
   const { day, selectedDays, pickersProps } = props;
   // console.log(pickersProps)
   const [open, setOpen] = useState(false);
@@ -49,6 +69,7 @@ const CustomDay = (props) => {
 
   const theme = useTheme();
   const router = useRouter();
+  // console.log(pickersProps)
 
   const List = async () => {
     try {
@@ -110,7 +131,7 @@ const CustomDay = (props) => {
           },
         }}
       >
-        <PickersDay
+        <StyledPickersDay
         sx={{
           'flexGrow': 1,
           height: '60px',
@@ -123,6 +144,8 @@ const CustomDay = (props) => {
           day={day}
           selectedDays={selectedDays}
           {...pickersProps}
+          weekend={isWeekend(day)}
+          holiday={holidays.isHoliday(day)}
           ref={ref}
           onClick={(e) => {
             setOpen(true);
