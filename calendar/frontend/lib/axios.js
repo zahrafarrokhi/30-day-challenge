@@ -1,5 +1,6 @@
 import axios from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
+import { logout } from "./utils";
 
 const axiosInstance = axios.create({
   withCredentials: true,
@@ -32,16 +33,20 @@ export const setupInterceptors = (store) => {
   // );
 
   createAuthRefreshInterceptor(axiosInstance, async (failedRequest) => {
-    const resp = await axiosInstance.post("/auth/refresh/", {
-      refresh: store.getState().authReducer?.refresh,
-    });
-    const { access: accessToken } = resp.data;
-    const bearer = `${process.env.JWT_AUTH_HEADER ?? "Bearer"} ${accessToken}`;
-    console.log(accessToken);
-    axiosInstance.defaults.headers.common.Authorization = bearer;
-
-    failedRequest.response.config.headers.Authorization = bearer;
-    return Promise.resolve();
+    try {
+      const resp = await axiosInstance.post("/auth/refresh/", {
+        refresh: store.getState().authReducer?.refresh,
+      });
+      const { access: accessToken } = resp.data;
+      const bearer = `${process.env.JWT_AUTH_HEADER ?? "Bearer"} ${accessToken}`;
+      console.log(accessToken);
+      axiosInstance.defaults.headers.common.Authorization = bearer;
+  
+      failedRequest.response.config.headers.Authorization = bearer;
+      return Promise.resolve();
+    } catch(e) {
+      logout(store.dispatch)
+    }
   });
 };
 

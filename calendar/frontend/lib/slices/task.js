@@ -6,7 +6,7 @@ export const listTask = createAsyncThunk(
   "auth/create",
   async (data, thunkAPI) => {
     try {
-      const response = await axios.post(`/task/task/`);
+      const response = await axios.get(`/task/task/`);
 
       console.log(response, response.data);
 
@@ -87,3 +87,5 @@ export const taskSlice = createSlice({
   //   });
   },
 });
+
+export const { reset } = taskSlice.actions;

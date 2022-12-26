@@ -6,10 +6,13 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useRouter } from "next/router";
+import { logout } from "../lib/utils";
+import { useDispatch } from "react-redux";
 
 export default function Navbar(props) {
   const {children}= props;
   const router = useRouter()
+  const dispatch = useDispatch()
   return (
     <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-300 flex h-full w-full justify-center items-center relative overflow-hidden">
     <div className="flex h-[90%] w-[90%] bg-slate-100 relative overflow-hidden rounded-lg">
@@ -47,7 +50,10 @@ export default function Navbar(props) {
             </ListItemButton>
           </ListItem>
           <ListItem >
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              logout(dispatch)
+              router.push('/auth/login')
+            }}>
               <ListItemText primary={"Logout"} />
             </ListItemButton>
           </ListItem>

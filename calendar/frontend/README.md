@@ -372,3 +372,55 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache,  }) 
   setupInterceptors(store)
 
 ```
+
+## logout
+```jsx
+// lib/slices/*.js
+export const { reset } = authSlice.actions
+// lib/utils.js
+import axiosInstance from './axios'
+
+
+export const logout = (dispatch) => {
+  dispatch(require('./slices/task').reset())
+  dispatch(require('./slices/auth').reset())
+
+  delete axiosInstance.defaults.headers.common.Authorization 
+}
+// components/navbar
+ <ListItem >
+  <ListItemButton onClick={() => logout(dispatch)}>
+    <ListItemText primary={"Logout"} />
+  </ListItemButton>
+</ListItem>
+
+// route to login page
+<ListItemButton onClick={() => {
+  logout(dispatch)
+  router.push('/auth/login')
+}}>
+  <ListItemText primary={"Logout"} />
+</ListItemButton>
+
+// After refresh token is expired, logout
+// lib/axios.js
+
+export const setupInterceptors = (store) => {
+  createAuthRefreshInterceptor(axiosInstance, async (failedRequest) => {
+    try {
+      const resp = await axiosInstance.post("/auth/refresh/", {
+        refresh: store.getState().authReducer?.refresh,
+      });
+      const { access: accessToken } = resp.data;
+      const bearer = `${process.env.JWT_AUTH_HEADER ?? "Bearer"} ${accessToken}`;
+      console.log(accessToken);
+      axiosInstance.defaults.headers.common.Authorization = bearer;
+  
+      failedRequest.response.config.headers.Authorization = bearer;
+      return Promise.resolve();
+    } catch(e) {
+      logout(store.dispatch)
+    }
+  });
+};
+```

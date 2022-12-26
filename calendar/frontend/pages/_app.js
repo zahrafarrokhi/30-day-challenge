@@ -16,7 +16,7 @@ const clientSideEmotionCache = createEmotionCache();
 function App({ Component, pageProps, emotionCache = clientSideEmotionCache,  }) {
   const getLayout = Component.getLayout || ((component) => component); 
   const store = useStore();
-
+  
   setupInterceptors(store)
 
   return (
