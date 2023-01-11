@@ -13,7 +13,7 @@ class ChatView(mixins.CreateModelMixin,mixins.ListModelMixin,viewsets.GenericVie
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        chat = Chat.objects.filter(user__contains=self.request.user)
+        chat = Chat.objects.filter(user__in=[self.request.user])
         return chat
 
 
@@ -23,14 +23,14 @@ class MessageView(mixins.CreateModelMixin,mixins.UpdateModelMixin,mixins.ListMod
 
     def get_queryset(self):
         query = self.request.query_params['chat']
-        # you see your message not other mesages
+        # you see your message not other messages
         # message = Message.objects.filter(user=self.request.user, chat=query)
 
         # you see any messages ,private chat doesnt exist
         # message = Message.objects.filter(chat=query)
 
         # private and see your chat and others
-        message = Message.objects.filter(chat__user__contains=self.request.user,chat=query)
+        message = Message.objects.filter(chat__user__in=[self.request.user],chat=query)
         return message
 
 

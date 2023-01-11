@@ -1,10 +1,11 @@
 from rest_framework import serializers
 
+from authentication.models import User
 from chat.models import Chat, Message
 
 
 class ChatSerializer(serializers.ModelSerializer):
-    add_users = serializers.PrimaryKeyRelatedField(source='user', many=True)
+    add_users = serializers.PrimaryKeyRelatedField(source='user', many=True, queryset=User.objects.all())
     class Meta:
         model = Chat
         fields ='__all__'
