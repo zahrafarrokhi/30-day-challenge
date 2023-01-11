@@ -7,12 +7,14 @@ import thunk from 'redux-thunk';
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
 import { authSlice } from './slices/auth';
 import { persistStore } from 'redux-persist';
+import { chatSlice } from './slices/chat';
 
 const makeStore = (initialState) => {
 
   const combinedReducers = combineReducers({
   //auth example
-   authReducer: authSlice.reducer,   
+   authReducer: authSlice.reducer, 
+   chatReducer: chatSlice.reducer,  
   
   });
   // reducer => get state & action => return new state

@@ -33,6 +33,7 @@ export const setupInterceptors = (store) => {
 
   createAuthRefreshInterceptor(axiosInstance, async (failedRequest) => {
     try {
+      console.log(store.getState().authReducer?.refresh,store.getState().authReducer)
       const resp = await axiosInstance.post("/auth/refresh/", {
         refresh: store.getState().authReducer?.refresh,
       });
