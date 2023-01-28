@@ -1,11 +1,13 @@
 from rest_framework import serializers
 
 from authentication.models import User
+from authentication.serializers import UserSerializer
 from chat.models import Chat, Message
 
 
 class ChatSerializer(serializers.ModelSerializer):
     add_users = serializers.PrimaryKeyRelatedField(source='user', many=True, queryset=User.objects.all())
+
     class Meta:
         model = Chat
         fields ='__all__'
@@ -21,10 +23,11 @@ class ChatSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Message
         fields ='__all__'
-        read_only_fields = ['user']
+        read_only_fields = ['user','seen_by']
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -33,7 +36,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class ChatRetrieveSerializer(serializers.ModelSerializer):
-    messages = MessageSerializer(source="message_set")
+    messages = MessageSerializer(source="message_set", many=True)
     class Meta:
         model = Chat
         fields = '__all__'

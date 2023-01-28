@@ -3,13 +3,16 @@ import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "../styles/Home.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { chatlist } from "../lib/slices/chat";
+import { chatlist, createMessage, retrievechat } from "../lib/slices/chat";
 import { useEffect } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const chats_list = useSelector((state) => state.chatReducer?.chats);
+  const msgs = useSelector((state) => state.chatReducer?.chat?.messages);
+  const chat = useSelector((state) => state.chatReducer?.chat);
   const dispatch = useDispatch();
-
+  const [value,setValue]=useState()
   const list = async () => {
     try {
       await dispatch(chatlist()).unwrap();
@@ -21,6 +24,24 @@ export default function Home() {
   useEffect(() => {
     list();
   }, []);
+
+  const msgList = async (id) => {
+    try {
+      await dispatch(retrievechat(id)).unwrap();
+      // await dispatch(retrievechat({id: id})).unwrap();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const createMsg = async()=>{
+    try {
+      await dispatch(createMessage({text:value,chat:chat.id})).unwrap();  // await dispatch(retrievechat({id: id})).unwrap();
+      setValue("")
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return (
     <div className="w-full h-full flex flex-row">
       <div className="border-0 border-r border-solid border-gray-400 flex flex-col basis-[15%] p-2 gap-4">
@@ -33,7 +54,7 @@ export default function Home() {
 
         <div className="flex flex-col justify-start gap-2">
           {chats_list?.map((chat) => (
-            <div key={chat.id} className="flex flex-col gap-2 group hover:bg-slate-300 rounded-lg p-1">
+            <button key={chat.id} className="flex flex-col gap-2 group hover:bg-slate-300 rounded-lg p-1" onClick={()=>msgList(chat.id)}>
               <div className="flex flex-row gap-2">
                 <div className="flex flex-col items-center justify-center">
                   <div className="rounded-full aspect-square w-[50px] overflow-hidden relative">
@@ -53,10 +74,19 @@ export default function Home() {
                 </div>
               </div>
               <hr />
-            </div>
+            </button>
           ))}
         </div>
       </div>
+      <div>
+{msgs?.map((msg)=><div>{msg.user.first_name}: {msg.text}</div>)}
+<div>
+
+  <input value={value} onChange={(e)=>setValue(e.target.value)} ></input>
+  <button onClick={createMsg}>submit</button>
+</div>
+      </div>
+
     </div>
   );
 }

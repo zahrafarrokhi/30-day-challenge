@@ -40,5 +40,5 @@ class ChatRetrieveView(mixins.RetrieveModelMixin,viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        chat = Chat.objects.filter(user__contains=self.request.user)
+        chat = Chat.objects.filter(user__in=[self.request.user])
         return chat
