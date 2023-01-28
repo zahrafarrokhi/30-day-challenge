@@ -69,17 +69,17 @@ class UserCreationForm(forms.ModelForm):
                 _("At least one of email/phone number must be specified"))
 
         pss = self.cleaned_data.get("password1")
-        if pss and pss != "":
-            self.cleaned_data['password'] = pss
+        if pss is not None and pss != "":
+            self.cleaned_data['password_unhashed'] = pss
         else:
-            self.cleaned_data['password'] = None
+            self.cleaned_data['password_unhashed'] = None
 
     def save(self, commit=True):
         # Save the provided password in hashed format
         user = super(UserCreationForm, self).save(commit=False)
-        new_password = self.cleaned_data.get("password", None)
-        if new_password:
-            user.set_password(self.cleaned_data["password"])
+        new_password = self.cleaned_data.get("password_unhashed", None)
+        if new_password is not None:
+            user.set_password(self.cleaned_data["password_unhashed"])
         elif user.password is None:
             user.set_unusable_password()
         if commit:
@@ -97,7 +97,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Personal info', {'fields': (
             'phone_number',
-            'password1', 'password')}),
+            'password1', 'password', 'first_name', 'last_name')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
         ('Permissions', {'fields': ('is_active', 'is_staff',
                                     'is_superuser', 'groups', 'user_permissions', )}),
