@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 
-class OtpSerializer(serializers.ModelSerializer):
+class LoginSerializer(serializers.ModelSerializer):
     # 'OTP' object has no attribute 'phone_number' error on postman =>  phone_number without  write_only=True
     # or
     # in def create =>  otp.phone_number = validated_data['phone_number']
@@ -59,7 +59,7 @@ class OtpSerializer(serializers.ModelSerializer):
         return otp
 
 
-class LoginSerializer(serializers.Serializer):
+class ConfirmSerializer(serializers.Serializer):
     # input frontend
     phone_number = serializers.CharField(write_only=True)
     otp = serializers.CharField(write_only=True)

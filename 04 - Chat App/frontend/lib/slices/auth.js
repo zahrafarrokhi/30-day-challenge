@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../axios";
 // getOtp
-export const getOtp = createAsyncThunk(
-  "auth/getOtp",
+export const login = createAsyncThunk(
+  "auth/login",
   async (data, thunkAPI) => {
     try {
-      const response = await axios.post(`/auth/login/sms/`, { ...data });
+      const response = await axios.post(`/auth/login/`, { ...data });
 
       console.log(response, response.data);
 
@@ -35,10 +35,10 @@ export const signup = createAsyncThunk(
 );
 // login
 // request to back for get accsess &refrsh
-export const login = createAsyncThunk("auth/login", async (data, thunkAPI) => {
+export const confirm = createAsyncThunk("auth/confirm", async (data, thunkAPI) => {
   try {
     // response backend => access & refresh in body
-    const response = await axios.post(`/auth/login/`, { ...data });
+    const response = await axios.post(`/auth/confirm/`, { ...data });
 
     console.log(response, response.data);
 
@@ -70,16 +70,16 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     // getOtp
-    builder.addCase(getOtp.pending, (state) => ({
+    builder.addCase(login.pending, (state) => ({
       ...state,
       loading: true,
     }));
-    builder.addCase(getOtp.rejected, (state, action) => ({
+    builder.addCase(login.rejected, (state, action) => ({
       ...state,
       loading: false,
       error: action.payload.error,
     }));
-    builder.addCase(getOtp.fulfilled, (state, action) => {
+    builder.addCase(login.fulfilled, (state, action) => {
       state.loading = false;
       state.phone_number = action.payload.data.phone_number
       return state;
@@ -101,16 +101,16 @@ export const authSlice = createSlice({
     });
 
     // login
-    builder.addCase(login.pending, (state) => ({
+    builder.addCase(confirm.pending, (state) => ({
       ...state,
       loading: true,
     }));
-    builder.addCase(login.rejected, (state, action) => ({
+    builder.addCase(confirm.rejected, (state, action) => ({
       ...state,
       loading: false,
       error: action.payload.error,
     }));
-    builder.addCase(login.fulfilled, (state, action) => {
+    builder.addCase(confirm.fulfilled, (state, action) => {
       state.loading = false;
       state.refresh = action.payload.data.refresh;
       state.access = action.payload.data.access;

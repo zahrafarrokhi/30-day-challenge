@@ -19,7 +19,7 @@ export default function Signup() {
       
       })).unwrap()
     
-      router.push('/auth/login')
+      router.push('/auth/confirm')
     } catch (error) {
       console.log(error)
     }
