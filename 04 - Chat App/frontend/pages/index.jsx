@@ -1,18 +1,21 @@
 import Head from "next/head";
 import Image from "next/image";
-import { Inter } from "@next/font/google";
+import { Inter, Ma_Shan_Zheng } from "@next/font/google";
 import styles from "../styles/Home.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { chatlist, createMessage, retrievechat } from "../lib/slices/chat";
+import { addMsg, chatlist, createMessage, retrievechat } from "../lib/slices/chat";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useRef } from "react";
 
 export default function Home() {
   const chats_list = useSelector((state) => state.chatReducer?.chats);
   const msgs = useSelector((state) => state.chatReducer?.chat?.messages);
+  const refreshToken = useSelector((state) => state.authReducer?.refresh);
   const chat = useSelector((state) => state.chatReducer?.chat);
   const dispatch = useDispatch();
   const [value,setValue]=useState()
+  const socket = useRef();
   const list = async () => {
     try {
       await dispatch(chatlist()).unwrap();
@@ -42,6 +45,44 @@ export default function Home() {
       console.error(e);
     }
   }
+
+  const startSocket = () => {
+    if (!refreshToken || socket.current) return;
+    const sock = new WebSocket(`ws://localhost:8000/ws/chat/`)
+    socket.current = sock
+    sock.onopen = () => {
+      sock.send(JSON.stringify({
+        type: 'login',
+        refresh_token: refreshToken
+      }))
+    }
+    sock.addEventListener('message', (e) => {
+      console.log(e)
+      const msg = JSON.parse(e.data)
+      if (msg.type == 'chat_message'){
+        dispatch(addMsg(msg.message))
+      }
+
+      // addMsg()
+    })
+    sock.onclose = (e) => {
+      // stopSocket()
+      setTimeout(startSocket(), 1000)
+    }
+  } 
+
+  const stopSocket = () => {
+    if (socket.current) socket.current.close()
+    socket.current = null
+  }
+
+  useEffect(() => {
+    if(typeof window !== 'undefined') startSocket();
+
+    return () => {
+      if(typeof window !== 'undefined') stopSocket()
+    }
+  }, [refreshToken])
   return (
     <div className="w-full h-full flex flex-row">
       <div className="border-0 border-r border-solid border-gray-400 flex flex-col basis-[15%] p-2 gap-4">

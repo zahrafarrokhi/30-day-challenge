@@ -64,6 +64,10 @@ export const chatSlice = createSlice({
   name: "chat",
   initialState: internalInitialState,
   reducers: {
+    // without await
+    addMsg:(state,action) =>{
+      state.chat.messages = [...state.chat.messages,action.payload]
+    },
     reset: () => internalInitialState,
   },
   extraReducers: (builder) => {
@@ -112,7 +116,7 @@ export const chatSlice = createSlice({
     }));
     builder.addCase(createMessage.fulfilled, (state, action) => {
       state.loading = false;
-      state.chat.messages = [...state.chat.messages,action.payload.data]
+      // state.chat.messages = [...state.chat.messages,action.payload.data]
       return state;
     });
 
@@ -120,4 +124,4 @@ export const chatSlice = createSlice({
   },
 });
 
-export const { reset } = chatSlice.actions;
+export const { reset,addMsg } = chatSlice.actions;
