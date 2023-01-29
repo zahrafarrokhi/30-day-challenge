@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
+    "channels",
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -74,7 +76,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'online_chat.wsgi.application'
-
+ASGI_APPLICATION = "online_chat.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -113,8 +123,9 @@ REST_FRAMEWORK = {
     ),
 
 
-
 }
+import rest_framework_simplejwt.authentication
+rest_framework_simplejwt.authentication.JWTAuthentication
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

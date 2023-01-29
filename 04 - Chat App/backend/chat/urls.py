@@ -1,6 +1,6 @@
 from django.urls import path,include
 from rest_framework import routers
-from . import views
+from . import views, consumers
 
 router = routers.DefaultRouter()
 router.register(r'chat', views.ChatView, basename='chat')
@@ -9,4 +9,9 @@ router.register(r'chat-retrieve' ,views.ChatRetrieveView, basename='chat-retriev
 
 urlpatterns = [
     path('', include(router.urls)),
+]
+
+ws_urlpatterns = [
+    path("ws/chat/<int:room_id>/", consumers.ChatConsumer.as_asgi()),
+
 ]
