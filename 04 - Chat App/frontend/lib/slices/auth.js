@@ -114,6 +114,7 @@ export const authSlice = createSlice({
       state.loading = false;
       state.refresh = action.payload.data.refresh;
       state.access = action.payload.data.access;
+      state.user = action.payload.data.user;
 
       axios.defaults.headers.common.Authorization = `Bearer ${state.access}`;
       return state;

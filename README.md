@@ -17,3 +17,7 @@
 
 ## 04 - Chat App (Django, React)
 * Authentication(Phone Number/OTP, Use simpleJwt only for creating tokens)
+* Create groups in admin
+* Send messages to groups
+* Use socket to live udpate the chat
+* React scroll to bottom
