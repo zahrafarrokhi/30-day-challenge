@@ -126,7 +126,7 @@ rootReducer =>(action.type === HYDRATE) else combinedReducers => run your slice
 ### backend
 
 ```python
-
+# pip install django-cors-headers
 INSTALLED_APPS = [
     'jazzmin',
    ...
