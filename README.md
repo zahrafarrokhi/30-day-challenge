@@ -23,7 +23,7 @@
 * React scroll to bottom
 
 
-## 06 - Online shop (Django=)
+## 05 - Online shop (Django)
 
 
 ## 06 - Weather app (Django, React)
