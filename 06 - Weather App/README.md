@@ -1,3 +1,3 @@
 # Weather app
 
-![Weather App](./screenshots/final.png)
+![Weather App](./backend/screenshots/final.png)

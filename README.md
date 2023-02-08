@@ -21,3 +21,14 @@
 * Send messages to groups
 * Use socket to live udpate the chat
 * React scroll to bottom
+
+
+## 06 - Online shop (Django=)
+
+
+## 06 - Weather app (Django, React)
+* Caching
+* Using requests package in python
+* Axios/async
+* Animation
+* Filter/map
