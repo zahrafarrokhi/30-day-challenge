@@ -1,3 +1,9 @@
+# Image Search
+![Main Page](./screenshots/main-page.png)
+![Category filter](./screenshots/category-filter.png)
+![Search Page](./screenshots/search.png)
+![Category Page](./screenshots/category-page.png)
+
 # Filters!
 ## Backend
 ### Sonati
@@ -222,3 +228,4 @@ const selectCategory =async (cati)=>{
 {cat.map(cati=> <button onClick={()=>selectCategory(cati)}>{cati.name}</button>)}
 
 ```
+
