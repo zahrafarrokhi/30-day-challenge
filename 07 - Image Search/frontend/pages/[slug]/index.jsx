@@ -20,7 +20,8 @@ function Index() {
     }
   }
   // const catId = useMemo(() => cat.filter(item => item.slug.toLowerCase()==slug?.toLowerCase())[0]?.id, [cat])
-  const category = useMemo(() => cat.filter(item => item.slug.toLowerCase()==slug?.toLowerCase())[0], [cat])
+  // const category = useMemo(() => cat.filter(item => item.slug.toLowerCase()==slug?.toLowerCase())[0], [cat])
+  const category = useMemo(() => cat.find(item => item.slug.toLowerCase()==slug?.toLowerCase()), [cat])
 
   useEffect(() => {
     categoryload()
