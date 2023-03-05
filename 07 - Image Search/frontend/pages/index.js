@@ -79,6 +79,18 @@ export default function Home() {
           {/* <button className={`px-4 py-1 rounded-lg hover:bg-slate-400 cursor-pointer ${selected ? 'bg-rose-300' : ''}`} onClick={()=>selectCategory(cat[1])}>{cat[1].name}</button> */}
           {/* {cat.map(cati=> <CategoryItem cati={cati} />)} */}
 
+          <Link
+          // href={`/${cati.slug}/`} 
+          href={{
+            pathname: '/',
+          }}
+          className={`px-4 py-1 rounded-lg hover:bg-slate-400 cursor-pointer bg-rose-300`}
+          >
+            {/* <a > */}
+
+            All
+            {/* </a> */}
+            </Link>
           {catList.map(cati=> <Link
           // href={`/${cati.slug}/`} 
           href={{
@@ -98,7 +110,7 @@ export default function Home() {
          
           
         </div>
-        <div className='block columns-5'>
+        <div className='block columns-6'>
           {data?.map(image => {
             return <div className='relative w-40 h-40 bg-white rounded-2xl overflow-hidden'>
               <img src={image.file} className="absolute top-0 right-0 left-0 bottom-4 object-contain h-36 w-40"/> 
